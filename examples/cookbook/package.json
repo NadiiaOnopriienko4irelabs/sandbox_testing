@@ -1,0 +1,19 @@
+{
+  "name": "cookbook",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "near-workspaces-ava"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^4.1.1",
+    "homedir": "^0.6.0",
+    "near-api-js": "file:../../"
+  },
+  "devDependencies": {
+    "near-workspaces-ava": "^1.0.0"
+  }
+}
