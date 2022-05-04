@@ -1,23 +1,24 @@
 import { workspace } from './utils'
-import {keyStores } from 'near-api-js'
+const moduleExample = require('../accounts/access-keys/delete-access-key')
+const {keyStores, deleteAccessKey} = moduleExample
 
-workspace.test('delete access key', async (test, { root, alice, status_message }) => {
+workspace.test('delete access key', async (test, {  alice }) => {
     const config = alice["manager"]["config"];
+    const randomData = Math.floor(Math.random() * (99999999999999 - 10000000000000) + 10000000000000);
 
-    const module = require('../accounts/access-keys/delete-access-key')
-    // "ed25519:4yLYjwC3Rd8EkhKwVPoAdy6EUcCVSz2ZixFtsCeuBEZD";
-    let ks = new keyStores.InMemoryKeyStore();
-    await ks.setKey('sandbox', alice.accountId, await alice.getKey());
+    const keyStore = new keyStores.InMemoryKeyStore();
+    await keyStore.setKey('sandbox', alice.accountId, await alice.getKey());
     const publicKey = await alice.getKey()
-    module.config.keyStore = ks
-    module.config.networkId = 'sandbox'
-    module.config.nodeUrl = config.rpcAddr;
-    const {deleteAccessKey} = module
+
+    moduleExample.config.keyStore = keyStore
+    moduleExample.config.networkId = 'sandbox'
+    moduleExample.config.nodeUrl = config.rpcAddr;
+
     test.truthy(await deleteAccessKey(alice.accountId, publicKey.getPublicKey()))
     // now with wrong account id
-    test.truthy(await deleteAccessKey(alice.accountId + 'a', publicKey.getPublicKey()));
+    test.truthy(await deleteAccessKey(alice.accountId + randomData, publicKey.getPublicKey()));
     // now with wrong public key
-    test.truthy(await deleteAccessKey(alice.accountId, publicKey.getPublicKey() +'2'));
+    test.truthy(await deleteAccessKey(alice.accountId, publicKey.getPublicKey() + randomData.toString()));
 
 
 })

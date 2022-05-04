@@ -16,12 +16,9 @@ async function getState(account_id, method_name, args_base64) {
     finality: "optimistic",
   };
 
-  // console.log(view_query)
-
     const rawResult = await exports.provider.query(view_query)
         const result = JSON.parse(Buffer.from(rawResult.result).toString());
         return { result, logs: rawResult.result };
-        // return { status: 'success', result: rawResult };
     } catch(e){
         return { status: 'failed', message: e.message };
   }

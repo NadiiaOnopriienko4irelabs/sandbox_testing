@@ -1,17 +1,19 @@
 import { workspace } from './utils'
+const moduleExample = require("../transactions/batch-transactions");
+const {keyStores, sendTransactions} = moduleExample
 
-workspace.test('batch transactions', async (test, { root, alice, status_message }) => {
+
+workspace.test('batch transactions', async (test, {  alice }) => {
     const config = alice["manager"]["config"];
-    const module = require('../transactions/batch-transactions')
-    const {keyStores, sendTransactions} = module
+    const randomData = Math.floor(Math.random() * (99999999999999 - 10000000000000) + 10000000000000);
 
-    let ks = new keyStores.InMemoryKeyStore();
-    await ks.setKey('sandbox', alice.accountId, await alice.getKey());
+    const keyStore = new keyStores.InMemoryKeyStore();
+    await keyStore.setKey('sandbox', alice.accountId, await alice.getKey());
 
-    module.config.keyStore = ks
-    module.config.networkId = 'sandbox'
-    module.config.nodeUrl = config.rpcAddr;
+    moduleExample.config.keyStore = keyStore
+    moduleExample.config.networkId = 'sandbox'
+    moduleExample.config.nodeUrl = config.rpcAddr;
 
     test.truthy(await sendTransactions(alice.accountId, alice.accountId))
-    test.truthy(await sendTransactions(alice.accountId, alice.accountId + 'a'));
+    test.truthy(await sendTransactions(alice.accountId, alice.accountId + randomData));
 })

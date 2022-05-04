@@ -34,3 +34,4 @@ async function verifySignature(account_id) {
 }
 
 exports.verifySignature = verifySignature
+exports.keyStores = keyStores

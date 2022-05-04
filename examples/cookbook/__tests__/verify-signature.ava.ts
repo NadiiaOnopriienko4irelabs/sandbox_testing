@@ -1,20 +1,20 @@
 import { workspace } from './utils'
-import {keyStores } from 'near-api-js'
+const moduleExample = require('../utils/verify-signature')
+const {keyStores, verifySignature} = moduleExample
 
 //note: any ideas on negative test here?
 
-workspace.test('verify signature', async (test, { root, alice, status_message }) => {
+workspace.test('verify signature', async (test, { alice }) => {
     const config = alice["manager"]["config"];
+    const randomData = Math.floor(Math.random() * (99999999999999 - 10000000000000) + 10000000000000);
+    const keyStore = new keyStores.InMemoryKeyStore();
+    await keyStore.setKey('sandbox', alice.accountId, await alice.getKey());
 
-    const module = require('../utils/verify-signature')
+    moduleExample.config.keyStore = keyStore
+    moduleExample.config.networkId = 'sandbox'
+    moduleExample.config.nodeUrl = config.rpcAddr;
 
-    let ks = new keyStores.InMemoryKeyStore();
-    await ks.setKey('sandbox', alice.accountId, await alice.getKey());
-    // console.log("debug get key: ", ks.getKey('sandbox', alice.accountId))
-    module.config.keyStore = ks
-    module.config.networkId = 'sandbox'
-    module.config.nodeUrl = config.rpcAddr;
-    const {verifySignature} = module
     test.truthy(await verifySignature(alice.accountId))
-    test.truthy(await verifySignature(alice.accountId + 'a'));
+    //now with wrong account_id
+    test.truthy(await verifySignature(alice.accountId + randomData));
 })
